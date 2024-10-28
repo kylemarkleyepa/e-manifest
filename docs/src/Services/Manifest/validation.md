@@ -2,7 +2,7 @@
 
 The following validations are performed on the manifest fields:
 
-## Generator information validation for the Image submission type manifests
+## Generator Information Validation for Image Submission Type 
 
 The manifest fee will be determined based on the Generator signature date (if provided).
 
@@ -40,24 +40,22 @@ The manifest fee will be determined based on the Generator signature date (if pr
 
    - 2.5. The manifest fee will be determined based on the receiving facility electronic signature date
 
-## Facility Information Validation for "Image" submission type
+## Facility Information Validation for Image Submission Type
 
-1. For the Image submission type, one of the following facility EPA site IDs must be provided: Designated Facility EPA
-   site ID, Generator EPA site ID, or Alternate Designated Facility site ID
-2. The following Facility EPA site IDs shall be provided for the following scenarios:
-   - Original Manifest, no Full Rejection: Designated Facility EPA site ID shall be provided.
-   - Original Manifest, Full Rejection to Alternate Designated Facility: Alternate Designated Facility EPA site ID
+1. For the Image submission type, one of the following facility EPA Site IDs must be provided based on the site responsible for the manifest user fee: Designated Facility EPA
+   Site ID, Generator EPA Site ID, or Alternate Designated Facility Site ID
+2. The Facility EPA ID to provide is based on the below scenarios:
+   - Original Manifest, no Full Rejection: Designated Facility EPA Site ID shall be provided.
+   - Original Manifest, Full Rejection to Alternate Designated Facility: Alternate Designated Facility EPA Site ID
      shall be provided.
-   - Original Manifest, Full Rejection to the Generator: Designated Facility EPA site ID shall be provided.
-   - New Manifest shipping waste back to original Generator (New Manifest is the manifest created as a "result" of the
-     Original manifest rejection or residue): Generator Facility EPA site ID shall be provided. This EPA site ID shall
-     contain the Original Designated Facility site ID.
-   - New Manifest shipping rejected waste to another Designated Facility: Designated Facility EPA site ID shall be
-     provided.
+   - Original Manifest, Full Rejection back to the Generator: Designated Facility EPA Site ID shall be provided.
+   - New Manifest shipping waste back to the original Generator (New Manifest is the manifest created as a result of the
+     original manifest rejection or residue): Generator Facility EPA Site ID shall be provided, which is Original Designated Facility Site ID.
+   - New Manifest shipping rejected waste to another Designated Facility: Designated Facility EPA Site ID shall be provided.
 3. If one of the following IDs: `Emanifest.designatedFacility.epaSiteID` and `Emanifest.generator.epaSiteId` and
    `Emanifest.rejectionInfo.alternateDesignatedFacility.siteId` is not provided then the service will return an
    authorization error.
-4. If the provided EPA SiteIDis not registered, then the service will return an authorization error.
+4. If the provided EPA Site ID is not registered, then the service will return an authorization error.
 5. If `Emanifest.designatedFacility.epaSiteId` or `Emanifest.generator.epaSiteId` or
    `Emanifest.rejectionInfo.alternateDesignatedFacility.siteId` is provided, the following applies
 
@@ -212,13 +210,11 @@ The manifest fee will be determined based on the Generator signature date (if pr
 
 ## Transporter Information Validation
 
-1. If `submissionType` is `FullElectronic` or `Hybrid`, then the Transporter is valid if the Transporter is registered
-   in RCRAInfo and the Transporter has at least one User with the e-Manifest Certifier Role and this user has a Received
-   ESA.
+1. If `submissionType` is `FullElectronic` or `Hybrid`, then the Transporter is valid its EPA Site ID is registered
+   in RCRAInfo and has at least one user with e-Manifest Preparer permission.
 
-   - 1.1. If the Transporter site ID is not provided, the service generates schema validation error.
-   - 1.2. If the Transporter site ID has an invalid format, the service generates schema validation error.
-   - 1.3. If the Transporter site ID is not registered, the service generates the following error:
+   - 1.1. If the Transporter site ID is not provided, the service generates a schema validation error.
+   - 1.2. If the Transporter site ID is not registered, the service generates the following error:
      ```json
      {
        "message": "For FullElectronic submission type registered Transporter Site Id must be provided",
@@ -226,36 +222,25 @@ The manifest fee will be determined based on the Generator signature date (if pr
        "value": "SiteIDvalue"
      }
      ```
-   - 1.4. If the Transporter site ID is registered and there are no users with the e-Manifest Certifier role for the
-     provided Transporter, the service generates the following error:
+   - 1.3. If the Transporter Site ID is registered and there are no users with at least the e-Manifest Preparer permission, the service generates the following error:
      ```json
      {
-       "message": "Site doesn't have any users with Certifier role or with ESA status 'Received",
+       "message": "Site doesn't have any users with 'Preparer' role",
        "field": "Emanifest.transporter.epaSiteId",
        "value": "SiteIDvalue"
      }
      ```
-   - 1.5. If the Transporter site ID is registered and there are no users with a received ESA, the service generates
-     the following error:
-     ```json
-     {
-       "message": "Site doesn't have any users with Certifier role or with ESA status 'Received",
-       "field": "Emanifest.transporter.epaSiteId",
-       "value": "SiteIDvalue"
-     }
-     ```
+
 
 2. If `submissionType` is `DataImage5Copy`, then registered and non-registered Transporters are valid.
 
-   - 2.1. If the Transporter is registered in RCRAInfo as a Transporter, then only the `epaSiteId` must be provided.
-     All
-     the site information will be obtained from RCRAInfo. If other site information is provided it will be ignored with
-     warnings.
+   - 2.1. If the Transporter is registered in RCRAInfo, then only the `epaSiteId` must be provided.
+     All the site information will be obtained from RCRAInfo. If other site information is provided it will be ignored with warnings.
    - 2.2. If the Transporter is not registered in RCRAInfo, then the following site information must be provided:
      - Site Address
      - Site Name
      - Contact phone
-   - 2.3. If site ID AND Site Information are not provided, the system generates errors.
+   - 2.3. If Site ID AND Site Information are not provided, the system generates errors.
 
      ```json
      {
@@ -285,7 +270,7 @@ The manifest fee will be determined based on the Generator signature date (if pr
      }
      ```
 
-   - 2.4. If site ID is provided AND Site Information is not provided, the system performs the following steps:
+   - 2.4. If Site ID is provided AND Site Information is not provided, the system performs the following steps:
 
      - Validate site ID format.
      - If site ID is not valid, the service generates the following error:
@@ -435,13 +420,13 @@ The manifest fee will be determined based on the Generator signature date (if pr
 
    ```json
    {
-     "message": "Provided Designated FacilityIDis not registered in RCRAInfo",
+     "message": "Provided Designated FacilityID is not registered in RCRAInfo",
      "field": "Emanifest.designatedFacility.epaSiteId",
      "value": "epa siteID value"
    }
    ```
 
-   - 2.4. If the Site Contact Phone number is not provided and registered in RCRAInfo Site does not contain the Site
+   - 2.4. If the Site Contact Phone number is not provided and RCRAInfo does not contain the Site
      Contact Phone Number, the system generates the following error:
 
    ```json
@@ -495,8 +480,8 @@ The manifest fee will be determined based on the Generator signature date (if pr
    }
    ```
 
-   - 2.8. If the user is authorized to use the e-Manifest Save service for the provided Generator SiteID (It means that
-     TSDF acts as Generator), then the provided SiteID was already validated during authorization and the system will
+   - 2.8. If the user is authorized to use the e-Manifest Save service for the provided Generator Site ID (It means that
+     TSDF acts as Generator), then the provided Site ID was already validated during authorization and the system will
      perform following steps:
 
    - 2.9. If the Site Contact Phone number is not provided in the JSON and site the is registered in RCRAInfo, the
@@ -648,11 +633,11 @@ The manifest fee will be determined based on the Generator signature date (if pr
 
 ## Generator Site Information Validation
 
-1. If `submissionType` is `FullElectronic` then the Generator is valid if the Generator SiteIDis registered in RCRAInfo
-   and the Generator has at least one User with the e-Manifest Certifier Role and this user has a Received ESA.
+1. If `submissionType` is `FullElectronic` then the Generator is valid if the Generator Site ID is registered in RCRAInfo
+   and has at least one User with the e-Manifest Preparer permission.
 2. If `submissionType` is `FullElectronic` the following applies
 
-   - 2.1. If the Generator SiteIDis not provided, the service generates the following error:
+   - 2.1. If the Generator Site ID is not provided, the service generates the following error:
 
    ```json
    {
@@ -661,7 +646,7 @@ The manifest fee will be determined based on the Generator signature date (if pr
    }
    ```
 
-   - 2.2. If the Generator SiteID has an invalid format the service generates the following error:
+   - 2.2. If the Generator Site ID has an invalid format the service generates the following error:
 
    ```json
    {
@@ -671,7 +656,7 @@ The manifest fee will be determined based on the Generator signature date (if pr
    }
    ```
 
-   - 2.3. If the Generator SiteIDis not registered in RCRAInfo the service generates the following error:
+   - 2.3. If the Generator Site ID is not registered in RCRAInfo the service generates the following error:
 
    ```json
    {
@@ -681,13 +666,12 @@ The manifest fee will be determined based on the Generator signature date (if pr
    }
    ```
 
-   - 2.4. If the Generator SiteIDis registered in RCRAInfo and there are no users with the e-Manifest Certifier role
-     for
-     the provided Generator the service generates the following error:
+   - 2.4. If the Generator Site ID is registered in RCRAInfo and there are no users with the e-Manifest Preparer permission
+     for the provided Generator the service generates the following error:
 
    ```json
    {
-     "message": "Site doesn't have any users with Certifier role or with ESA status Received",
+     "message": "Site doesn't have any users with 'Preparer' role",
      "field": "Emanifest.designatedFacility.epaSiteId",
      "value": "SiteIDvalue"
    }
